@@ -19,4 +19,5 @@ t/live/13broadcast.t
 t/live/14feedback.t
 t/live/15stats.t
 t/live/16ping_device.t
+Changes
 META.yml                                 Module meta-data (added by MakeMaker)

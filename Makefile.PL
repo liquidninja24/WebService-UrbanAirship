@@ -15,8 +15,9 @@ my @tests = grep { ! m/live/ } sort keys %directories;
 WriteMakefile(
   'NAME'              => 'WebService::UrbanAirship',
   'VERSION_FROM'      => 'lib/WebService/UrbanAirship.pm',
-  'PREREQ_PM'         => { 'JSON::XS'      => 0, 
-                           'Crypt::SSLeay' => 0,
+  'PREREQ_PM'         => { 'JSON::XS'       => 0, 
+                           'Crypt::SSLeay'  => 0,
+                           'LWP::UserAgent' => 0,
                          },
   test         => { TESTS => join ' ', @tests },
 );

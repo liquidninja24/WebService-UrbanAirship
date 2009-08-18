@@ -58,16 +58,26 @@ sub new {
 #---------------------------------------------------------------------
 sub _init {
 
+  shift->ua;
+}
+
+
+#---------------------------------------------------------------------
+# set up the ua object
+#---------------------------------------------------------------------
+sub ua {
+
   my $self = shift;
 
   my %args = @_;
 
-  my $ua = LWP::UserAgent->new(agent             => $self->_agent(),
+  my $ua = $self->{_ua} ||
+           LWP::UserAgent->new(agent             => $self->_agent(),
                                protocols_allowed => [ qw(https) ],
                                timeout           => $self->_timeout(),
                               );
 
-  # whip up some default headers
+  # set (or reset) the headers
   my $headers = HTTP::Headers->new();
 
   # all data needs to be JSON
@@ -80,7 +90,10 @@ sub _init {
 
   $self->{_ua} = $ua;
 
+  return $ua;
 }
+
+
 
 #---------------------------------------------------------------------
 # default user-agent string
@@ -130,7 +143,7 @@ sub register_device {
 
   }
 
-  my $ua = $self->{_ua};
+  my $ua = $self->ua;
 
   my $headers = $ua->default_headers;
 
@@ -165,7 +178,7 @@ sub ping_device {
   $token = uc $token;
   $token =~ s/[-\s<>]//g;
 
-  my $ua = $self->{_ua};
+  my $ua = $self->ua;
 
   my $headers = $ua->default_headers;
 
@@ -334,7 +347,7 @@ sub _request {
   print STDERR "request: ", $request->as_string
     if $DEBUG;
 
-  my $response = $self->{_ua}->request($request);
+  my $response = $self->ua->request($request);
 
   print STDERR "response: ", $response->as_string
     if $DEBUG;
@@ -401,7 +414,7 @@ sub _craft_payload {
 
   my %args = %{shift || {}};
 
-  my $badge = delete $args{badge};
+  my $badge = eval { int delete $args{badge} };
   my $alert = delete $args{alert};
   my $sound = delete $args{sound};
 

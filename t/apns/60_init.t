@@ -23,7 +23,7 @@ use_ok($class);
   isa_ok ($ua, 'LWP::UserAgent');
 
   like ($ua->agent,
-        qr($class/0.0\d),
+        qr($class/0.\d+),
         'user-agent string properly set');
 
   is ($ua->timeout,
