@@ -21,7 +21,7 @@ use LWP::Protocol::https ();
 
 our $DEBUG   = 0;
 
-our $VERSION = 0.01;
+our $VERSION = "0.02";
 
 our @ISA     = qw(WebService::UrbanAirship);
 
@@ -137,7 +137,10 @@ sub register_device {
 
   my $json;
 
-  if (scalar keys %args && $args{alias}) {
+  if (scalar keys %args) {
+
+    delete $args{alias} unless $args{alias};
+    delete $args{tags} unless $args{tags} && ref $args{tags};
 
     $json = JSON::XS::encode_json(\%args);
 
@@ -203,7 +206,7 @@ sub push {
 
   my %args  = @_;
 
-  my $perl = $self->_craft_single_push(\%args);
+  my ($perl, $body) = $self->_craft_single_push(\%args);
 
   return unless $perl;
 
@@ -218,7 +221,7 @@ sub push {
 
   $request->content($json);
 
-  return $self->_request($request);
+  return $self->_request($request, $body);
 }
 
 sub batch {
@@ -233,7 +236,7 @@ sub batch {
 
     next unless ref $key eq 'HASH';
  
-    my $perl = $self->_craft_single_push($key);
+    my ($perl) = $self->_craft_single_push($key, 1);
 
     next unless $perl;
 
@@ -266,7 +269,14 @@ sub broadcast {
 
   return unless $payload;
 
-  my $json = JSON::XS::encode_json($payload);
+  my $perl = {aps => $payload};
+
+  if (my $exclude = delete $args{exclude_tokens}) {
+    $perl->{exclude_tokens} = $exclude
+      if ref $exclude && ref $exclude eq 'ARRAY';
+  }
+
+  my $json = JSON::XS::encode_json($perl);
 
   my $uri = $self->_api_uri;
 
@@ -372,6 +382,8 @@ sub _craft_single_push {
 
   my %args = %{shift || {}};
 
+  my $batch = shift;
+
   my $payload = $self->_craft_payload(\%args);
 
   return unless $payload;
@@ -388,7 +400,17 @@ sub _craft_single_push {
     return unless ref $aliases eq 'ARRAY';
   }
 
-  return unless (scalar @$aliases || scalar @$tokens);
+  my $tags = [];
+
+  unless ($batch) {
+    $tags = delete $args{tags} || [];
+
+    if ($tags) {
+      return unless ref $tags eq 'ARRAY';
+    }
+  }
+
+  return unless (scalar @$aliases || scalar @$tokens || scalar @$tags);
 
   my $perl = {};
 
@@ -400,11 +422,31 @@ sub _craft_single_push {
     $perl->{device_tokens} = $tokens;
   }
 
+  if (scalar @$tags) {
+    $perl->{tags} = $tags;
+  }
+
   return unless scalar keys %$perl;
 
   $perl->{aps} = $payload;
 
-  return $perl;
+  my $body = 0;
+
+  unless ($batch) {
+    if (my $schedule = delete $args{schedule_for}) {
+      if (ref $schedule && ref $schedule eq 'ARRAY') {
+        $perl->{schedule_for} = $schedule ;
+        $body = 1;
+      }
+    }
+
+    if (my $exclude = delete $args{exclude_tokens}) {
+      $perl->{exclude_tokens} = $exclude
+        if ref $exclude && ref $exclude eq 'ARRAY';
+    }
+  }
+
+  return ($perl, $body);
 }
 
 
@@ -444,10 +486,11 @@ WebService::UrbanAirship::APNS - routines for Urban Airship Apple Push Notificat
                                               application_push_secret => 'HGrBg37****************ylFA');
 
   # now do something, like register the device
-  my $o->register_device(device_token => 'FE66489F304DC75B8D6E8200DFF8A456E8DAEACEC428B427E9518741C92C6660',
-                         alias        => 'de039f61e64d3300aa0ce521fd6a65f780cc814e',
+  $o->register_device(device_token => 'FE66489F304DC75B8D6E8200DFF8A456E8DAEACEC428B427E9518741C92C6660',
+                      alias        => 'de039f61e64d3300aa0ce521fd6a65f780cc814e',
 
   # and send a notification
+  $o->push(device_token => 'FE66489F304DC75B8D6E8200DFF8A456E8DAEACEC428B427E9518741C92C6660');
 
 
 =head1 DESCRIPTION
@@ -529,7 +572,12 @@ broadcasts but only recommended for individual pushes.
   my $code = $o->register_device(device_token => $token,
                                  alias        => $alias);
 
-the 'alias' argument is optional.
+the 'alias' and 'tags' arguments are optional.  'alias' must
+be a simple string, while '$tags' much be a reference to an array
+of simple strings.
+
+  my $code = $o->register_device(device_token => $token,
+                                 tags         => [$tag1, 'tag 2']);
 
 the return value is false on failure, 201 for when the device
 is initially created, and 200 for any updates.
@@ -558,7 +606,9 @@ sends a single push to one or more devices and/or aliases
                       alert         => 'coolio!',
                       sound         => 'cool.caf');
 
-returns false on error, true on success.
+returns false on error, true on success.  if 'schedule_for'
+is included as an argument, a true value will be the scheduled
+notifications as json.
 
 both the 'device_tokens' and 'aliases' arguments, if present,
 must be references to arrays.  neither is required, but
@@ -568,6 +618,14 @@ method will return false without actually trying to do anything.
 all of 'badge', 'alert', and 'sound' are optional, but if none
 exist the method will return false without actually trying
 to do anything.
+
+'schedule_for', 'exclude_tokens', and 'tags' are optional arguments.
+if included, each must be an array:
+
+  my $json = $o->push(tags           => [$tag1, $tag2],
+                      badge          => 1,
+                      schedule_for   => [$iso8601date],
+                      exclude_tokens => [$token]);
 
 parallels http://urbanairship.com/docs/push.html#push
 

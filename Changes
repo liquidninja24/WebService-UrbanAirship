@@ -8,3 +8,6 @@ Revision history for Perl extension WebService::CaptchasDotNet
 
 0.03  08.18.2009
 	- make sure the badge argument is numeric, else it won't work
+
+0.04  10.01.2009
+	- add tags, schedule_for, and excluded_tokens to push API

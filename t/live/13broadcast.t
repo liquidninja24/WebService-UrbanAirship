@@ -74,7 +74,7 @@ use_ok($class);
         qr!\QWSAUTH => Basic a2V5OnB1c2ggc2VjcmV0!,
         "request used application push key for authentication");
   
-  my $test = '{"badge":0}';
+  my $test = '{"aps":{"badge":0}}';
 
   like ($content,
         qr!\QWSBODY => $test!,
@@ -114,7 +114,7 @@ use_ok($class);
 
   my $content = do { local $/; <$fh> };
 
-  my $test = '{"alert":"Whoa!","badge":3,"sound":"annoyme.caf"}';
+  my $test = '{"aps":{"alert":"Whoa!","badge":3,"sound":"annoyme.caf"}}';
 
   like ($content,
         qr!\QWSBODY => $test!,
