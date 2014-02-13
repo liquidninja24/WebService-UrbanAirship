@@ -1,13 +1,16 @@
-Revision history for Perl extension WebService::CaptchasDotNet
+Revision history for Perl extension WebService::UrbanAirship
 
 0.01  07.30.2009
-	- original version
+  - original version
 
 0.02  08.03.2009
-	- re-initialize the user agent for subsequent calls
+  - re-initialize the user agent for subsequent calls
 
 0.03  08.18.2009
-	- make sure the badge argument is numeric, else it won't work
+  - make sure the badge argument is numeric, else it won't work
 
 0.04  10.01.2009
-	- add tags, schedule_for, and excluded_tokens to push API
+  - add tags, schedule_for, and excluded_tokens to push API
+
+0.05  13.01.2014
+  - update to work with v3 of the UrbanAirship API
