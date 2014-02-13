@@ -7,6 +7,8 @@ use Apache::Test qw(-withtestmore);
 
 My::TestUtil->write_echo();
 
+__END__
+
 plan tests => 21;
 
 my $class = qw(My::Subclass);
@@ -16,7 +18,7 @@ use_ok($class);
 {
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->batch;
 
@@ -27,7 +29,7 @@ use_ok($class);
 {
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->batch(device_tokens => 5,
                      aliases       => 'string',
@@ -40,7 +42,7 @@ use_ok($class);
 {
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->batch({ device_tokens => 5,
                        aliases       => 'string',
@@ -53,7 +55,7 @@ use_ok($class);
 {
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->batch({ device_tokens => [],
                        aliases       => ['my device alias']});
@@ -67,7 +69,7 @@ use_ok($class);
 
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->batch({ device_tokens => [qw(one two)],
                        aliases       => [qw(three four)],
@@ -131,7 +133,7 @@ use_ok($class);
 
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->batch({ device_tokens => [qw(one two)],
                        aliases       => [qw(three four)],

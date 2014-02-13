@@ -16,7 +16,7 @@ use_ok($class);
 {
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->push;
 
@@ -27,7 +27,7 @@ use_ok($class);
 {
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->push(device_tokens => 5,
                     aliases       => 'string',
@@ -41,7 +41,7 @@ use_ok($class);
 {
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->push(device_tokens => [],
                     aliases       => ['my device alias']);
@@ -55,7 +55,7 @@ use_ok($class);
 
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->push(device_tokens => [qw(one two)],
                     aliases       => [qw(three four)],
@@ -119,7 +119,7 @@ use_ok($class);
 
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->push(device_tokens => [qw(one two)],
                     aliases       => [qw(three four)],

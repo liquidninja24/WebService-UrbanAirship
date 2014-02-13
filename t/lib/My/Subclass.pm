@@ -3,9 +3,9 @@ package My::Subclass;
 use strict;
 use warnings FATAL => qw(all);
 
-use WebService::UrbanAirship::APNS;
+use WebService::UrbanAirship;
 
-our @ISA = qw(WebService::UrbanAirship::APNS);
+our @ISA = qw(WebService::UrbanAirship);
 
 
 sub _api_uri {

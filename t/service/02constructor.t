@@ -3,7 +3,7 @@ use warnings FATAL => qw(all);
 
 use Test::More tests => 9;
 
-my $class = qw(WebService::UrbanAirship::APNS);
+my $class = qw(WebService::UrbanAirship);
 
 use_ok($class);
 
@@ -25,8 +25,8 @@ use_ok($class);
        };
 
   like ($@,
-        qr/application_push_secret/,
-        'application_push_secret missing');
+        qr/application_master_secret/,
+        'application_master_secret missing');
 }
 
 {
@@ -34,11 +34,11 @@ use_ok($class);
 
   no warnings qw(redefine);
 
-  local *WebService::UrbanAirship::APNS::_init = sub { $called++ };
+  local *WebService::UrbanAirship::_init = sub { $called++ };
 
-  my $o = $class->new(application_key         => 'key',
-                      application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+  my $o = $class->new(application_key           => 'key',
+                      application_secret        => 'secret',
+                      application_master_secret => 'master secret');
 
   isa_ok($o, $class);
   isa_ok($o, 'WebService::UrbanAirship');
@@ -53,13 +53,13 @@ use_ok($class);
 
   no warnings qw(redefine);
 
-  local *WebService::UrbanAirship::APNS::_init = sub { shift; %args = @_ };
+  local *WebService::UrbanAirship::_init = sub { shift; %args = @_ };
 
   my %pass = (foo => 1, bar => 2);
 
-  my $o = $class->new(application_key         => 'key',
-                      application_secret      => 'secret',
-                      application_push_secret => 'push secret',
+  my $o = $class->new(application_key           => 'key',
+                      application_secret        => 'secret',
+                      application_master_secret => 'master secret',
                       %pass);
 
   isa_ok($o, $class);

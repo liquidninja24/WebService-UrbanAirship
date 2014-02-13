@@ -7,6 +7,8 @@ use Apache::Test qw(-withtestmore);
 
 My::TestUtil->write_echo();
 
+__END__
+
 plan tests => 18;
 
 my $class = qw(My::Subclass);
@@ -16,7 +18,7 @@ use_ok($class);
 {
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->broadcast;
 
@@ -29,7 +31,7 @@ use_ok($class);
 
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->broadcast(badge => 0);
 
@@ -91,7 +93,7 @@ use_ok($class);
 
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master secret');
 
   my $rc = $o->broadcast(badge => 3,
                          alert => 'Whoa!',

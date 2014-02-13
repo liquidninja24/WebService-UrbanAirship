@@ -19,7 +19,7 @@ use_ok($class);
 {
   my $o = $class->new(application_key         => 'key',
                       application_secret      => 'secret',
-                      application_push_secret => 'push secret');
+                      application_master_secret => 'master_secret');
 
   my $rc = $o->register_device;
 
@@ -35,7 +35,7 @@ foreach my $alias (undef, '', 'my device alias') {
 
     my $o = $class->new(application_key         => 'key',
                         application_secret      => 'secret',
-                        application_push_secret => 'push secret');
+                        application_master_secret => 'master_secret');
 
     my $rc = $o->register_device(device_token => '0000    0000-lcwdw <dfsd >aerfdd >- gghi    htds',
                                  alias        => $alias,
