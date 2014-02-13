@@ -309,9 +309,8 @@ sub _request {
     if $DEBUG;
 
   if ($response->is_success) {
-
     if ($body) {
-      return $response->content;
+      return JSON::XS::decode_json $response->content;
     }
     else {
       return $response->code;
