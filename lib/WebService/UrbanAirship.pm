@@ -11,6 +11,7 @@ use HTTP::Response ();
 use HTTP::Headers ();
 use LWP::UserAgent ();
 use LWP::Protocol::https ();
+use URI::QueryParam ();
 use URI ();
 
 
@@ -233,6 +234,20 @@ sub push {
   $request->content($json);
 
   return $self->_request($request, $body);
+}
+
+sub auth_echo {
+  my ($self, $msg) = @_;
+
+  my $headers = HTTP::Headers->new();
+  $headers->authorization_basic($self->{_key}, $self->{_secret});
+
+  my $uri = $self->_api_uri;
+  $uri->path('/api/auth_echo/');
+  $uri->query_param(msg => $msg);
+
+  my $request = HTTP::Request->new('GET', $uri);
+  return $self->_request($request, 1);
 }
 
 
