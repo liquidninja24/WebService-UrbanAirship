@@ -21,7 +21,7 @@ use URI ();
 
 our $DEBUG   = 0;
 
-our $VERSION = "0.05";
+our $VERSION = "0.06";
 
 #---------------------------------------------------------------------
 # constructor
@@ -323,16 +323,12 @@ sub _request {
   print STDERR "response: ", $response->as_string
     if $DEBUG;
 
-  if ($response->is_success) {
-    if ($body) {
-      return JSON::XS::decode_json $response->content;
-    }
-    else {
-      return $response->code;
-    }
+  if ($body) {
+    return JSON::XS::decode_json $response->content;
   }
-
-  return;
+  else {
+    return $response->code;
+  }
 }
 
 
