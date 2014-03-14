@@ -21,7 +21,7 @@ use URI ();
 
 our $DEBUG   = 0;
 
-our $VERSION = "0.06";
+our $VERSION = "0.07";
 
 #---------------------------------------------------------------------
 # constructor
@@ -227,6 +227,28 @@ sub push {
   my $uri = $self->_api_uri;
 
   $uri->path('/api/push/');
+
+  my $request = HTTP::Request->new('POST',
+                                   $uri);
+
+  $request->content($json);
+
+  return $self->_request($request, $body);
+}
+
+sub validate {
+  my $self = shift;
+
+  my $payload = shift;
+
+  my $perl = $payload;
+  my $body = 1;
+
+  my $json = JSON::XS::encode_json($perl);
+
+  my $uri = $self->_api_uri;
+
+  $uri->path('/api/push/validate/');
 
   my $request = HTTP::Request->new('POST',
                                    $uri);
